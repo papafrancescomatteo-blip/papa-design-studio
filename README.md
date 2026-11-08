@@ -26,3 +26,8 @@ Se il servizio dormiva, la chiusura viene comunque recuperata al primo accesso o
 - `/` home pubblica (chi è Claudio Papa, percorso, prodotti, premi, contatti)
 - `/login` accesso riservato
 - `/app` gestione note spese (solo dopo il login)
+
+## Gestione della home
+Dall'area riservata, pulsante **Sito** (`/admin`): prodotti, riviste e Cersaie, premi, percorso e ritratto si aggiungono,
+modificano, riordinano e ricevono foto direttamente dal browser. I contenuti iniziali sono in `content_seed.py`
+e vengono caricati una sola volta al primo avvio.

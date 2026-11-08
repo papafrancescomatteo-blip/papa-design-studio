@@ -270,35 +270,6 @@
     };
   };
 
-  $('#photoBtn').onclick = async () => {
-    const slots = await api('/api/media');
-    const draw = list => list.map(s => `<div class="slot" data-slot="${s.slot}">
-        <div class="thumb">${s.version ? `<img src="/media/${s.slot}?v=${s.version}" alt="">` : '<span class="muted">Nessuna foto</span>'}</div>
-        <div class="sl-info"><b>${esc(s.label)}</b>
-          <div class="row"><label class="btn small primary">${s.version ? 'Sostituisci' : 'Carica foto'}<input type="file" accept="image/*" hidden></label>
-            ${s.version ? '<button class="btn small danger" data-rm>Rimuovi</button>' : ''}</div></div></div>`).join('');
-    const { root } = openModal(`<h2>Foto del sito</h2>
-      <p class="muted" style="margin-top:-8px">Le foto compaiono subito nella home pubblica. Usa immagini di cui hai i diritti (le tue o quelle dei prodotti che ti hanno fornito le aziende).</p>
-      <div id="slots" class="slots">${draw(slots)}</div>
-      <div class="foot" style="margin-top:16px;display:flex;justify-content:flex-end"><button class="btn" data-cancel>Chiudi</button></div>`);
-    $('[data-cancel]', root).onclick = () => root.innerHTML = '';
-    const refresh = async () => { $('#slots', root).innerHTML = draw(await api('/api/media')); };
-    root.addEventListener('change', async e => {
-      if (e.target.type !== 'file' || !e.target.files[0]) return;
-      const slot = e.target.closest('.slot').dataset.slot, fd = new FormData(); fd.append('file', e.target.files[0]);
-      e.target.closest('label').firstChild.textContent = 'Carico…';
-      const r = await fetch('/api/media/' + slot, { method: 'POST', headers: { 'X-CSRF-Token': CSRF }, body: fd, credentials: 'same-origin' });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok) toast(d.error || 'Caricamento non riuscito'); else toast('Foto aggiornata');
-      refresh();
-    });
-    root.addEventListener('click', async e => {
-      if (!e.target.closest('[data-rm]')) return;
-      if (!confirm('Rimuovere questa foto?')) return;
-      await api('/api/media/' + e.target.closest('.slot').dataset.slot, 'DELETE'); toast('Foto rimossa'); refresh();
-    });
-  };
-
   $('#prevM').onclick = () => { month = shiftMonth(month, -1); load(); };
   $('#nextM').onclick = () => { if (month < NOW_MONTH) { month = shiftMonth(month, 1); load(); } };
 

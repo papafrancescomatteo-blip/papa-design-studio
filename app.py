@@ -16,6 +16,7 @@ from flask import (Flask, abort, jsonify, redirect, render_template, request, se
                    session, url_for)
 from werkzeug.security import check_password_hash
 
+import content_seed
 import excel_export
 from store import DEFAULT_RATE, FIELDS_NUM, make_store
 
@@ -296,13 +297,11 @@ def logout():
 
 
 # ----------------------------------------------------------------------------- pagine
-MEDIA_SLOTS = {
-    "ritratto": "Ritratto di Claudio Papa",
-    "albatros": "Prodotti Albatros (wellness e bagno)",
-    "disenia": "The Wellness Collection · Disenia",
-    "sanitari": "Sanitari e ceramica",
-    "rubinetteria": "Rubinetteria e vasche",
-}
+MEDIA_SLOTS = {"ritratto": "Ritratto di Claudio Papa"}
+
+
+def slot_ok(slot):
+    return slot in MEDIA_SLOTS or (slot.startswith("c-") and store.get_content(slot[2:]) is not None)
 STATIC_IMG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "img")
 
 
@@ -317,14 +316,58 @@ def media_versions():
     return out
 
 
+def ensure_seed():
+    if not store.content_seeded():
+        if not store.list_content():
+            for d in content_seed.seed_docs():
+                store.add_content(d)
+        store.mark_content_seeded()
+
+
+CONTENT_TYPES = {
+    "product": {"icon": 20, "brand": 120, "title": 120, "text": 600, "items": 2000, "url": 400, "urllabel": 60},
+    "news": {"kind": 20, "source": 80, "title": 160, "when": 60, "text": 600, "url": 400},
+    "award": {"year": 40, "title": 160, "detail": 240},
+    "timeline": {"year": 40, "text": 500},
+}
+ICONS = {"vapore", "acqua", "ceramica", "doccia", "fuoco"}
+KINDS = {"Rivista", "Cersaie", "Evento", "Web"}
+
+
+def clean_content(ctype, data):
+    spec = CONTENT_TYPES[ctype]
+    out = {}
+    for k, mx in spec.items():
+        v = data.get(k, "")
+        if k == "items":
+            lines = [str(x).strip()[:160] for x in (v if isinstance(v, list) else str(v).splitlines()) if str(x).strip()]
+            out[k] = lines[:30]
+            continue
+        out[k] = str(v or "").strip()[:mx]
+    if "url" in out and out["url"] and not out["url"].lower().startswith(("http://", "https://")):
+        raise ValueError("Il link deve iniziare con http:// o https://")
+    if ctype == "product":
+        out["icon"] = out["icon"] if out["icon"] in ICONS else "acqua"
+    if ctype == "news":
+        out["kind"] = out["kind"] if out["kind"] in KINDS else "Rivista"
+    required = {"product": "title", "news": "title", "award": "title", "timeline": "text"}[ctype]
+    if not out.get(required):
+        raise ValueError("Compila il campo obbligatorio")
+    return out
+
+
 @app.route("/")
 def home():
-    return render_template("home.html", media=media_versions())
+    ensure_seed()
+    groups = {t: [] for t in CONTENT_TYPES}
+    for c in store.list_content():
+        groups.setdefault(c["type"], []).append(c)
+    return render_template("home.html", media=media_versions(), g=groups)
 
 
 @app.get("/media/<slot>")
 def media_get(slot):
-    if slot not in MEDIA_SLOTS:
+    if not slot_ok(slot):
         abort(404)
     doc = store.get_media(slot)
     if doc:
@@ -345,10 +388,87 @@ def api_media_list():
     return jsonify([{"slot": k, "label": v, "version": info.get(k)} for k, v in MEDIA_SLOTS.items()])
 
 
+@app.route("/admin")
+@login_required()
+def admin():
+    return render_template("admin.html", csrf=csrf_token())
+
+
+def public_content(c, versions):
+    d = {k: v for k, v in c.items() if k != "_id"}
+    d["id"] = c["_id"]
+    d["version"] = versions.get("c-" + c["_id"])
+    return d
+
+
+@app.get("/api/content")
+@login_required(api=True)
+def api_content_list():
+    ensure_seed()
+    versions = media_versions()
+    return jsonify({"items": [public_content(c, versions) for c in store.list_content()],
+                    "portrait": versions.get("ritratto")})
+
+
+@app.post("/api/content/<ctype>")
+@login_required(api=True)
+def api_content_add(ctype):
+    if ctype not in CONTENT_TYPES:
+        abort(404)
+    try:
+        doc = clean_content(ctype, request.get_json(force=True) or {})
+    except ValueError as exc:
+        return jsonify(error=str(exc)), 400
+    same = [c.get("order", 0) for c in store.list_content() if c["type"] == ctype]
+    doc.update(type=ctype, order=(max(same) + 1) if same else 0)
+    return jsonify(id=store.add_content(doc)["_id"]), 201
+
+
+@app.put("/api/content/<_id>")
+@login_required(api=True)
+def api_content_edit(_id):
+    cur = store.get_content(_id)
+    if not cur:
+        return jsonify(error="Voce non trovata"), 404
+    try:
+        doc = clean_content(cur["type"], request.get_json(force=True) or {})
+    except ValueError as exc:
+        return jsonify(error=str(exc)), 400
+    store.update_content(_id, doc)
+    return jsonify(ok=True)
+
+
+@app.delete("/api/content/<_id>")
+@login_required(api=True)
+def api_content_del(_id):
+    if not store.delete_content(_id):
+        return jsonify(error="Voce non trovata"), 404
+    return jsonify(ok=True)
+
+
+@app.post("/api/content/<_id>/move")
+@login_required(api=True)
+def api_content_move(_id):
+    cur = store.get_content(_id)
+    if not cur:
+        return jsonify(error="Voce non trovata"), 404
+    step = -1 if (request.get_json(force=True) or {}).get("dir") == -1 else 1
+    same = [c for c in store.list_content() if c["type"] == cur["type"]]
+    for i, c in enumerate(same):  # rinumera 0..n per sicurezza
+        c["order"] = i
+    idx = next(i for i, c in enumerate(same) if c["_id"] == _id)
+    j = idx + step
+    if 0 <= j < len(same):
+        same[idx], same[j] = same[j], same[idx]
+    for i, c in enumerate(same):
+        store.update_content(c["_id"], {"order": i})
+    return jsonify(ok=True)
+
+
 @app.post("/api/media/<slot>")
 @login_required(api=True)
 def api_media_put(slot):
-    if slot not in MEDIA_SLOTS:
+    if not slot_ok(slot):
         abort(404)
     f = request.files.get("file")
     if not f:
@@ -369,7 +489,7 @@ def api_media_put(slot):
 @app.delete("/api/media/<slot>")
 @login_required(api=True)
 def api_media_del(slot):
-    if slot not in MEDIA_SLOTS:
+    if not slot_ok(slot):
         abort(404)
     store.delete_media(slot)
     return jsonify(ok=True)

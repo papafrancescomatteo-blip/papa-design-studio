@@ -36,6 +36,7 @@ class MemoryStore(BaseStore):
         self.lock = threading.RLock()
         self.expenses, self.notifs, self.settings = {}, {}, {}
         self.media = {}
+        self.content = {}
 
     def _get_settings(self):
         return self.settings.get("main")
@@ -70,6 +71,38 @@ class MemoryStore(BaseStore):
     def months_with_expenses(self):
         with self.lock:
             return sorted({e["date"][:7] for e in self.expenses.values()})
+
+    # ---- contenuti del sito pubblico ----
+    def content_seeded(self):
+        return bool(self.settings.get("main", {}).get("content_seeded"))
+
+    def mark_content_seeded(self):
+        self.set_settings(content_seeded=True)
+
+    def list_content(self):
+        with self.lock:
+            return sorted((dict(c) for c in self.content.values()), key=lambda c: (c["type"], c.get("order", 0)))
+
+    def get_content(self, _id):
+        return self.content.get(_id)
+
+    def add_content(self, doc):
+        doc = dict(doc, _id=uuid.uuid4().hex)
+        with self.lock:
+            self.content[doc["_id"]] = doc
+        return doc
+
+    def update_content(self, _id, fields):
+        with self.lock:
+            if _id not in self.content:
+                return False
+            self.content[_id].update(fields)
+            return True
+
+    def delete_content(self, _id):
+        with self.lock:
+            self.delete_media("c-" + _id)
+            return self.content.pop(_id, None) is not None
 
     def get_notif(self, ym):
         return self.notifs.get(ym)
@@ -138,6 +171,31 @@ class MongoStore(BaseStore):
 
     def months_with_expenses(self):
         return sorted({d[:7] for d in self.db.expenses.distinct("date")})
+
+    # ---- contenuti del sito pubblico ----
+    def content_seeded(self):
+        return bool((self._get_settings() or {}).get("content_seeded"))
+
+    def mark_content_seeded(self):
+        self.set_settings(content_seeded=True)
+
+    def list_content(self):
+        return sorted(self.db.content.find(), key=lambda c: (c["type"], c.get("order", 0)))
+
+    def get_content(self, _id):
+        return self.db.content.find_one({"_id": _id})
+
+    def add_content(self, doc):
+        doc = dict(doc, _id=uuid.uuid4().hex)
+        self.db.content.insert_one(doc)
+        return doc
+
+    def update_content(self, _id, fields):
+        return self.db.content.update_one({"_id": _id}, {"$set": fields}).matched_count == 1
+
+    def delete_content(self, _id):
+        self.delete_media("c-" + _id)
+        return self.db.content.delete_one({"_id": _id}).deleted_count == 1
 
     def get_notif(self, ym):
         return self.db.notifications.find_one({"_id": ym})

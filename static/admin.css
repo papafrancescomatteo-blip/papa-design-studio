@@ -1,0 +1,27 @@
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:26px 0 18px;border-bottom:1px solid var(--line)}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:10px 16px;cursor:pointer;font-weight:500;margin-bottom:-1px}
+.tabs button:hover{color:var(--text)}
+.tabs button.on{color:var(--gold2);border-color:var(--gold)}
+.ahead{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.ahead h2{font-size:28px}.ahead .sp{flex:1}
+.alist{display:grid;gap:10px}
+.arow{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;flex-wrap:wrap}
+.arow .th{width:84px;aspect-ratio:4/3;border-radius:9px;overflow:hidden;background:var(--bg);border:1px dashed var(--line2);flex:none;display:grid;place-items:center;font-size:11px;color:var(--muted)}
+.arow .th img{width:100%;height:100%;object-fit:cover}
+.arow .tx{flex:1;min-width:200px}
+.arow .tx b{display:block;font-weight:600;overflow-wrap:anywhere}
+.arow .tx span{color:var(--muted);font-size:13.5px;overflow-wrap:anywhere}
+.arow .acts{display:flex;gap:6px;flex-wrap:wrap}
+.hint{color:var(--muted);font-size:12.5px}
+.form.modalform .f textarea,.form.modalform .f select{background:var(--bg);border:1px solid var(--line2);border-radius:9px;padding:10px 12px;outline:none;width:100%;color:inherit;font:inherit}
+.form.modalform .f textarea{min-height:110px;resize:vertical}
+.form.modalform .f textarea:focus,.form.modalform .f select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,106,.15)}
+.photo-edit{display:flex;gap:14px;align-items:center}
+.photo-edit .th{width:120px;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--bg);border:1px dashed var(--line2);display:grid;place-items:center;font-size:12px;color:var(--muted);flex:none}
+.photo-edit .th img{width:100%;height:100%;object-fit:cover}
+.portrait-box{display:flex;gap:22px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.portrait-box .th{width:180px;aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:var(--bg);border:1px dashed var(--line2);display:grid;place-items:center;color:var(--muted);font-size:13px}
+.portrait-box .th img{width:100%;height:100%;object-fit:cover}
+.f label.btn{text-transform:none;letter-spacing:0;font-size:13px;color:var(--text)}
+.form .foot{justify-content:flex-end}
+.form .foot .err{margin-right:auto}

@@ -20,6 +20,14 @@
     items.forEach(i => io.observe(i));
   } else items.forEach(i => i.classList.add('in'));
 
+  // filtro riviste / Cersaie / eventi
+  const fb = $('#newsFilter');
+  if (fb) fb.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    fb.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    document.querySelectorAll('#newsGrid .ncard').forEach(c => c.classList.toggle('hide', !!b.dataset.k && c.dataset.k !== b.dataset.k));
+  });
+
   // numeri che salgono
   const fmt = { plain: n => String(Math.round(n)), x: n => '×' + Math.round(n) };
   document.querySelectorAll('[data-n]').forEach(el => {

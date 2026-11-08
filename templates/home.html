@@ -1,3 +1,11 @@
+{% macro icon(name) -%}
+{%- if name == 'vapore' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 36c0-5 5-5 5-10s-5-5-5-10M24 36c0-5 5-5 5-10s-5-5-5-10M34 36c0-5 5-5 5-10s-5-5-5-10"/></svg>
+{%- elif name == 'ceramica' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h32l-3 14a6 6 0 0 1-6 5H17a6 6 0 0 1-6-5z"/><path d="M14 20v-6a6 6 0 0 1 6-6h2"/></svg>
+{%- elif name == 'doccia' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8a8 8 0 0 0-8 8v4"/><path d="M14 20h16"/><path d="M22 28c0 4-3 6-3 9a3 3 0 0 0 6 0c0-3-3-5-3-9z"/></svg>
+{%- elif name == 'fuoco' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6c2 7 10 10 10 20a10 10 0 0 1-20 0c0-5 3-7 4-11 2 2 3 3 4 5 1-4 1-8 2-14z"/></svg>
+{%- else -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 30c4-4 8-4 12 0s8 4 12 0 8-4 12 0M6 38c4-4 8-4 12 0s8 4 12 0 8-4 12 0"/><path d="M8 22V12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v10"/></svg>
+{%- endif -%}
+{%- endmacro %}
 <!doctype html>
 <html lang="it">
 <head>
@@ -27,7 +35,7 @@
   <a class="brand" href="#top" aria-label="Papa Design Studio"><img src="{{ url_for('static', filename='logo.png') }}" alt="Papa Design Studio"></a>
   <nav id="menu" aria-label="Principale">
     <a href="#chi">Chi è</a><a href="#percorso">Percorso</a><a href="#prodotti">Prodotti</a>
-    <a href="#premi">Premi</a><a href="#contatti">Contatti</a>
+    <a href="#premi">Premi</a><a href="#riviste">Riviste</a><a href="#contatti">Contatti</a>
   </nav>
   <a class="btn small ghost" href="/login">Area riservata</a>
   <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
@@ -76,16 +84,7 @@
   <p class="eyebrow rv">Percorso</p>
   <h2 class="h2 rv">Dalle due ruote alle <em>vasche</em>.</h2>
   <ol class="timeline">
-    <li class="rv"><time>1964</time><p>Nasce a Catania.</p></li>
-    <li class="rv"><time>1990</time><p>Si diploma in Industrial Design all’I.S.I.A. di Roma; la tesi, uno scooter, nasce in collaborazione con <b>Piaggio</b>.</p></li>
-    <li class="rv"><time>Anni ’90</time><p>Due anni al Centro Stile Piaggio Veicoli Europei. Parallelamente i primi progetti per arredo d’interni e arredo bagno; circa otto anni al fianco di Carlo Urbinati per <b>Jacuzzi</b>.</p></li>
-    <li class="rv"><time>2003</time><p>Docente di tecnologie sperimentali e progettazione alla <b>Sapienza</b> di Roma.</p></li>
-    <li class="rv"><time>2013</time><p>Cura la rubrica di design sulla rivista <b>Vista Casa</b>.</p></li>
-    <li class="rv"><time>2015</time><p>Docente di design universale e interior design allo <b>IED di Venezia</b>.</p></li>
-    <li class="rv"><time>2016</time><p>Dirige il dipartimento di Progettazione ed Arti applicate dell’<b>Accademia di Belle Arti di Udine</b> e conduce una trasmissione radiofonica sul design.</p></li>
-    <li class="rv"><time>2017</time><p>Porta il design italiano in dieci università cinesi.</p></li>
-    <li class="rv"><time>2018</time><p>Diventa art director di <b>Albatros</b>, storica azienda wellness di Spilimbergo (PN).</p></li>
-    <li class="rv"><time>2023</time><p>Presenta a Cersaie la <b>Wellness Collection</b> di Disenia.</p></li>
+    {% for t in g.timeline %}<li class="rv"><time>{{ t.year }}</time><p>{{ t.text }}</p></li>{% endfor %}
   </ol>
 </div></section>
 
@@ -96,50 +95,19 @@
   <p class="sub rv">Una selezione dei progetti più rappresentativi. Il catalogo completo conta 35 prodotti.</p>
 
   <div class="grid4">
-    <article class="pcard rv{% if 'albatros' in media %} has-img{% endif %}">
-      {% if 'albatros' in media %}<div class="pimg"><img src="/media/albatros?v={{ media['albatros'] }}" alt="Prodotti Albatros disegnati da Claudio Papa" loading="lazy"></div>{% endif %}
-      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 36c0-5 5-5 5-10s-5-5-5-10M24 36c0-5 5-5 5-10s-5-5-5-10M34 36c0-5 5-5 5-10s-5-5-5-10"/></svg>
-      <small>Albatros · Spilimbergo (PN)</small>
-      <h3>Wellness e bagno</h3>
-      <p>Il lavoro come art director dal 2018, con il sistema brevettato <b>Secret System</b>.</p>
-      <ul>
-        <li>Hammam Plus <i>Home e Contract</i></li><li>Modula Pool <i>minipiscina a sfioro</i></li>
-        <li>Modula S e S Combi <i>saune</i></li><li>Modula F e Wall <i>vasche</i></li>
-        <li>Ethos <i>minipiscina e vasca</i></li><li>Syraka · Graphic · Soreha Wall</li>
-      </ul>
+    {% for p in g.product %}{% set mk = 'c-' ~ p._id %}
+    <article class="pcard rv{% if mk in media %} has-img{% endif %}" style="--d:{{ (loop.index0 % 4) * 0.08 }}s">
+      {% if mk in media %}<div class="pimg"><img src="/media/{{ mk }}?v={{ media[mk] }}" alt="{{ p.title }}" loading="lazy"></div>{% endif %}
+      {{ icon(p.icon) }}
+      <small>{{ p.brand }}</small>
+      <h3>{{ p.title }}</h3>
+      <p>{{ p.text }}</p>
+      {% if p["items"] %}<ul>
+        {% for line in p['items'] %}{% set parts = line.split(' | ') %}<li>{{ parts[0] }}{% if parts|length > 1 %}<i>{{ parts[1] }}</i>{% endif %}</li>{% endfor %}
+      </ul>{% endif %}
+      {% if p.url %}<a class="plink" href="{{ p.url }}" target="_blank" rel="noopener">{{ p.urllabel or 'Scopri di più' }} ↗</a>{% endif %}
     </article>
-    <article class="pcard rv{% if 'disenia' in media %} has-img{% endif %}" style="--d:.08s">
-      {% if 'disenia' in media %}<div class="pimg"><img src="/media/disenia?v={{ media['disenia'] }}" alt="The Wellness Collection di Disenia" loading="lazy"></div>{% endif %}
-      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 30c4-4 8-4 12 0s8 4 12 0 8-4 12 0M6 38c4-4 8-4 12 0s8 4 12 0 8-4 12 0"/><path d="M8 22V12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v10"/></svg>
-      <small>Disenia · IdeaGroup</small>
-      <h3>The Wellness Collection</h3>
-      <p>Un sistema coordinato di minipiscine, vasche e accessori, per interni ed esterni. Tutto made in Italy.</p>
-      <ul>
-        <li>Élite: Helba 240, Helba 210, Gilium</li><li>Linos e Kyra <i>minipiscine</i></li>
-        <li>Aretusa · Fonte · Ellisse Plus · Dhelia <i>vasche</i></li><li>Solaris · Atollo · Lido <i>accessori</i></li>
-        <li>Libeccio e Grecale <i>docce outdoor</i></li><li>Lumina <i>braciere</i></li>
-      </ul>
-    </article>
-    <article class="pcard rv{% if 'sanitari' in media %} has-img{% endif %}" style="--d:.16s">
-      {% if 'sanitari' in media %}<div class="pimg"><img src="/media/sanitari?v={{ media['sanitari'] }}" alt="Sanitari disegnati da Claudio Papa" loading="lazy"></div>{% endif %}
-      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h32l-3 14a6 6 0 0 1-6 5H17a6 6 0 0 1-6-5z"/><path d="M14 20v-6a6 6 0 0 1 6-6h2"/></svg>
-      <small>Azzurra Ceramica · Ege Vitrifiye</small>
-      <h3>Sanitari e ceramica</h3>
-      <p>Linee di sanitari premiate a livello europeo.</p>
-      <ul>
-        <li>Class 05 <i>Azzurra Ceramica</i></li><li>Finikia <i>Ege Vitrifiye</i></li><li>Katamaran <i>Ege Vitrifiye</i></li>
-      </ul>
-    </article>
-    <article class="pcard rv{% if 'rubinetteria' in media %} has-img{% endif %}" style="--d:.24s">
-      {% if 'rubinetteria' in media %}<div class="pimg"><img src="/media/rubinetteria?v={{ media['rubinetteria'] }}" alt="Rubinetteria e vasche disegnate da Claudio Papa" loading="lazy"></div>{% endif %}
-      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8a8 8 0 0 0-8 8v4"/><path d="M14 20h16"/><path d="M22 28c0 4-3 6-3 9a3 3 0 0 0 6 0c0-3-3-5-3-9z"/></svg>
-      <small>Ama Luxury Shower · Glass1989</small>
-      <h3>Rubinetteria e vasche</h3>
-      <p>Dettagli in acciaio inox e idromassaggio.</p>
-      <ul>
-        <li>Link <i>miscelatori in acciaio inox</i></li><li>Eden <i>vasca angolare idromassaggio</i></li>
-      </ul>
-    </article>
+    {% endfor %}
   </div>
   <p class="more rv"><a class="btn" href="https://www.archiproducts.com/it/designer/claudio-papa" target="_blank" rel="noopener">Vedi tutti i 35 prodotti su Archiproducts ↗</a></p>
 </div></section>
@@ -149,13 +117,32 @@
   <p class="eyebrow rv">Riconoscimenti</p>
   <h2 class="h2 rv">Premi che <em>raccontano</em> il lavoro.</h2>
   <ul class="awards">
-    <li class="rv"><time>2020 · 2022</time><div><b>Finalista Compasso d’Oro ADI</b><span>Il più autorevole premio italiano di design</span></div></li>
-    <li class="rv"><time>2019</time><div><b>ADI Ceramics &amp; Bathroom Design Award, innovazione</b><span>Secret System · Syraka e Modula Pool (Albatros) · Cersaie</span></div></li>
-    <li class="rv"><time>2019</time><div><b>European Product Design Award</b><span>Home Interiors Product · Hammam Plus (Albatros)</span></div></li>
-    <li class="rv"><time>2018</time><div><b>ADI Ceramics &amp; Bathroom Design Award</b><span>Hammam Plus (Albatros) · poi selezionato per l’ADI Design Index 2019</span></div></li>
-    <li class="rv"><time>2017 · 2018</time><div><b>European Product Design Award</b><span>Finikia e Katamaran (Ege Vitrifiye)</span></div></li>
-    <li class="rv"><time>2006 · 2007</time><div><b>Best Bathroom Design</b><span>Class 05 (Azzurra Ceramica)</span></div></li>
+    {% for a in g.award %}<li class="rv"><time>{{ a.year }}</time><div><b>{{ a.title }}</b><span>{{ a.detail }}</span></div></li>{% endfor %}
   </ul>
+</div></section>
+
+<!-- ============================ RIVISTE & CERSAIE ============================ -->
+<section class="sec" id="riviste"><div class="wrap">
+  <p class="eyebrow rv">Riviste, fiere ed eventi</p>
+  <h2 class="h2 rv">Di lui hanno <em>scritto</em>.</h2>
+  <p class="sub rv">Servizi sulle riviste di design, presentazioni a Cersaie e appuntamenti del Fuorisalone.</p>
+  <div class="chips rv" id="newsFilter">
+    <button class="on" data-k="">Tutto</button>
+    {% for k in ['Rivista','Cersaie','Evento','Web'] %}{% if g.news|selectattr('kind','equalto',k)|list %}<button data-k="{{ k }}">{{ 'Riviste' if k == 'Rivista' else k }}</button>{% endif %}{% endfor %}
+  </div>
+  <div class="ngrid" id="newsGrid">
+    {% for n in g.news %}{% set mk = 'c-' ~ n._id %}
+    <article class="ncard rv" data-k="{{ n.kind }}">
+      {% if mk in media %}<div class="nimg"><img src="/media/{{ mk }}?v={{ media[mk] }}" alt="{{ n.title }}" loading="lazy"></div>{% endif %}
+      <div class="nbody">
+        <div class="nmeta"><span class="tag k-{{ n.kind|lower }}">{{ n.kind }}</span><span>{{ n.source }}</span>{% if n.when %}<span>· {{ n.when }}</span>{% endif %}</div>
+        <h3>{{ n.title }}</h3>
+        {% if n.text %}<p>{{ n.text }}</p>{% endif %}
+        {% if n.url %}<a class="plink" href="{{ n.url }}" target="_blank" rel="noopener">Leggi ↗</a>{% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
 </div></section>
 
 <!-- ============================ STUDIO ============================ -->
@@ -183,7 +170,6 @@
   </div>
   <h3 class="h3 rv">Online</h3>
   <div class="links rv">
-    <a href="http://www.claudiopapadesigner.it" target="_blank" rel="noopener">Sito di Claudio Papa ↗</a>
     <a href="https://www.archiproducts.com/it/designer/claudio-papa" target="_blank" rel="noopener">Archiproducts ↗</a>
     <a href="https://www.adi-design.org/profilo.php?q=id%3D4687&labelportfolio=info" target="_blank" rel="noopener">ADI · Associazione per il Disegno Industriale ↗</a>
     <a href="https://www.fuorisalone.it/en/designer/1589/Claudio-Papa-designer-ABA-Udine" target="_blank" rel="noopener">Fuorisalone ↗</a>
