@@ -384,6 +384,24 @@ def api_settings_put():
     return jsonify(ok=True, rate=rate, anticipo=anticipo, updated=updated)
 
 
+def shift_month(ym, d):
+    y, m = int(ym[:4]), int(ym[5:7])
+    t = y * 12 + (m - 1) + d
+    return f"{t // 12}-{t % 12 + 1:02d}"
+
+
+@app.get("/api/year")
+@login_required(api=True)
+def api_year():
+    cur = current_month()
+    out = []
+    for i in range(11, -1, -1):
+        ym = shift_month(cur, -i)
+        t = month_summary(store.list_expenses(ym), 0)
+        out.append({"month": ym, "label": month_label(ym), "totale": t["totale"], "km": t["km"]})
+    return jsonify(out)
+
+
 @app.get("/api/months")
 @login_required(api=True)
 def api_months():

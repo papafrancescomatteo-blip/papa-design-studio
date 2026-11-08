@@ -4,24 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0c0d10">
 <title>Accesso · Papa Design Studio</title>
+<link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="grain">
 <main class="login">
+  <div class="glow" aria-hidden="true"></div>
   <form class="card" method="post" autocomplete="on">
-    <div class="logo">Papa</div>
-    <div class="sub">Design Studio · Finanze</div>
+    <img class="login-logo" src="{{ url_for('static', filename='logo.png') }}" alt="Papa Design Studio">
+    <div class="goldline" aria-hidden="true"></div>
+    <h1 class="login-title">Area riservata</h1>
+    <p class="login-sub">Le finanze dello studio, sempre in ordine.</p>
     <input type="hidden" name="csrf" value="{{ csrf }}">
     <div class="f"><label for="email">Email</label>
       <input id="email" name="email" type="email" autocomplete="username" required autofocus></div>
     <div class="f"><label for="password">Password</label>
       <input id="password" name="password" type="password" autocomplete="current-password" required></div>
     {% if error %}<p class="err" role="alert">{{ error }}</p>{% endif %}
-    <button class="btn primary" type="submit">Accedi</button>
+    <button class="btn primary shine" type="submit">Entra</button>
   </form>
+  <footer class="login-foot">
+    Papa Design Studio di Claudio Papa s.a.s · Via Tarcento, 1 · S. Daniele del Friuli (UD)
+  </footer>
 </main>
 </body>
 </html>

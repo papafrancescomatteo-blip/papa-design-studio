@@ -35,6 +35,70 @@
   const dayLabel = iso => new Date(iso + 'T12:00:00').toLocaleDateString('it-IT',
     { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
+
+  // ---------------------------------------------------------------- saluto, animazioni, grafici
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function greet() {
+    const h = new Date().getHours();
+    $('#hello').textContent = (h < 5 ? 'Buonanotte' : h < 13 ? 'Buongiorno' : h < 18 ? 'Buon pomeriggio' : 'Buonasera') + ', Claudio';
+  })();
+
+  const FMT = { int: n => String(Math.round(n)), km: n => n.toLocaleString('it-IT', { maximumFractionDigits: 1 }) + ' km', eur };
+  function countUp() {
+    document.querySelectorAll('#stats [data-n]').forEach(el => {
+      const to = Number(el.dataset.n), f = FMT[el.dataset.f];
+      if (reduce || !to) { el.textContent = f(to); return; }
+      const t0 = performance.now(), dur = 900;
+      const step = now => {
+        const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = f(to * e);
+        if (k < 1) requestAnimationFrame(step); else el.textContent = f(to);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  const SPLIT = [['tot_km', 'Rimborso km'], ['parcheggi', 'Parcheggi'], ['alloggio', 'Alloggio'], ['benzina', 'Benzina'],
+                 ['pedaggi', 'Pedaggi'], ['diaria', 'Diaria'], ['varie', 'Varie/Pasti']];
+  function renderSplit() {
+    const t = state.totals, rows = SPLIT.map(([k, l]) => [l, t[k] || 0]).filter(r => r[1] > 0).sort((a, b) => b[1] - a[1]);
+    const tot = rows.reduce((a, r) => a + r[1], 0);
+    $('#splitSub').textContent = state.label;
+    $('#split').innerHTML = rows.length ? rows.map(([l, v], i) => `<div class="split-row">
+      <span class="nm">${l}</span>
+      <div class="track"><div class="fill" style="width:${(v / rows[0][1]) * 100}%;animation-delay:${i * 0.07}s"></div></div>
+      <span class="am">${eur(v)}<i>${Math.round(v / tot * 100)}%</i></span></div>`).join('')
+      : '<div class="split-empty">Quando aggiungerai delle spese, qui vedrai come si dividono.</div>';
+  }
+
+  let yearData = null;
+  const SHORT = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+  function renderYear() {
+    if (!yearData) return;
+    const W = 600, H = 210, top = 22, bot = 28, ch = H - top - bot, n = yearData.length, slot = W / n, bw = slot * 0.58;
+    const max = Math.max(1, ...yearData.map(d => d.totale));
+    let g = `<defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0c68f"/><stop offset="1" stop-color="#a98d55"/></linearGradient></defs>`;
+    [0.5, 1].forEach(f => g += `<line class="grid" x1="0" x2="${W}" y1="${top + ch * (1 - f)}" y2="${top + ch * (1 - f)}"/>`);
+    g += `<line class="base" x1="0" x2="${W}" y1="${top + ch}" y2="${top + ch}"/>`;
+    yearData.forEach((d, i) => {
+      const h = d.totale > 0 ? Math.max(4, ch * d.totale / max) : 0, x = i * slot + (slot - bw) / 2, y = top + ch - h;
+      g += `<g class="col ${d.month === month ? 'sel' : ''}" data-m="${d.month}" tabindex="0" role="button" aria-label="${esc(d.label)}: ${eur(d.totale)}">
+        <rect x="${i * slot}" y="0" width="${slot}" height="${H}" fill="transparent"/>
+        ${h ? `<rect class="bar-r" x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" style="animation-delay:${i * 0.04}s"/>` : ''}
+        ${d.totale > 0 ? `<text class="val" x="${i * slot + slot / 2}" y="${y - 6}">${Math.round(d.totale).toLocaleString('it-IT')}</text>` : ''}
+        <text class="lab" x="${i * slot + slot / 2}" y="${H - 8}">${SHORT[+d.month.slice(5) - 1]}</text>
+        <title>${esc(d.label)} · ${eur(d.totale)}</title></g>`;
+    });
+    $('#yearChart').innerHTML = `<svg class="ychart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Totale spese degli ultimi 12 mesi">${g}</svg>`;
+  }
+  $('#yearChart').addEventListener('click', e => {
+    const c = e.target.closest('.col'); if (c) { month = c.dataset.m; load(); }
+  });
+  $('#yearChart').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { const c = e.target.closest('.col'); if (c) { e.preventDefault(); month = c.dataset.m; load(); } }
+  });
+  async function loadYear() { yearData = await api('/api/year'); renderYear(); }
+
   // ---------------------------------------------------------------- form riutilizzabile
   function formHTML({ withDate, e = {}, rate }) {
     const f = (name, label, type = 'number', extra = '', cls = '') =>
@@ -78,10 +142,15 @@
     $('#nextM').disabled = month >= NOW_MONTH;
     $('#dlBtn').href = `/download/${month}.xlsx`;
     $('#stats').innerHTML = `
-      <div class="stat"><small>Voci</small><strong>${s.expenses.length}</strong></div>
-      <div class="stat"><small>Chilometri</small><strong>${(t.km).toLocaleString('it-IT')} km</strong></div>
-      <div class="stat"><small>Totale spese</small><strong>${eur(t.totale)}</strong></div>
-      <div class="stat hl"><small>Da rimborsare</small><strong>${eur(t.da_rimborsare)}</strong></div>`;
+      <div class="stat"><small>Voci</small><strong data-n="${s.expenses.length}" data-f="int">0</strong></div>
+      <div class="stat"><small>Chilometri</small><strong data-n="${t.km}" data-f="km">0</strong></div>
+      <div class="stat"><small>Totale spese</small><strong data-n="${t.totale}" data-f="eur">0</strong></div>
+      <div class="stat hl"><small>Da rimborsare</small><strong data-n="${t.da_rimborsare}" data-f="eur">0</strong></div>`;
+    countUp();
+    renderSplit();
+    $('#heroSub').textContent = s.expenses.length
+      ? `Ecco la situazione di ${s.label}: ${s.expenses.length} ${s.expenses.length === 1 ? 'voce registrata' : 'voci registrate'}.`
+      : `Nessuna spesa registrata in ${s.label}.`;
 
     const groups = {};
     s.expenses.forEach(e => (groups[e.date] ||= []).push(e));
@@ -245,7 +314,7 @@
 
   async function load() {
     state = await api('/api/month/' + month);
-    render(); loadArchive(); loadNotifs();
+    render(); loadArchive(); loadNotifs(); loadYear();
   }
   load();
   setInterval(loadNotifs, 5 * 60 * 1000);
