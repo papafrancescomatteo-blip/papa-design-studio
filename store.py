@@ -30,10 +30,12 @@ class BaseStore:
 
 class MemoryStore(BaseStore):
     kind = "memory"
+    media = None
 
     def __init__(self):
         self.lock = threading.RLock()
         self.expenses, self.notifs, self.settings = {}, {}, {}
+        self.media = {}
 
     def _get_settings(self):
         return self.settings.get("main")
@@ -71,6 +73,20 @@ class MemoryStore(BaseStore):
 
     def get_notif(self, ym):
         return self.notifs.get(ym)
+
+    def set_media(self, slot, data, mime):
+        with self.lock:
+            self.media[slot] = {"_id": slot, "data": data, "mime": mime, "updated": int(dt.datetime.utcnow().timestamp())}
+
+    def get_media(self, slot):
+        return self.media.get(slot)
+
+    def delete_media(self, slot):
+        with self.lock:
+            return self.media.pop(slot, None) is not None
+
+    def media_info(self):
+        return {k: v["updated"] for k, v in self.media.items()}
 
     def create_notif(self, ym):
         with self.lock:
@@ -125,6 +141,23 @@ class MongoStore(BaseStore):
 
     def get_notif(self, ym):
         return self.db.notifications.find_one({"_id": ym})
+
+    def set_media(self, slot, data, mime):
+        from bson.binary import Binary
+        self.db.media.update_one({"_id": slot}, {"$set": {"data": Binary(data), "mime": mime,
+                                 "updated": int(dt.datetime.utcnow().timestamp())}}, upsert=True)
+
+    def get_media(self, slot):
+        d = self.db.media.find_one({"_id": slot})
+        if d:
+            d["data"] = bytes(d["data"])
+        return d
+
+    def delete_media(self, slot):
+        return self.db.media.delete_one({"_id": slot}).deleted_count == 1
+
+    def media_info(self):
+        return {d["_id"]: d.get("updated", 0) for d in self.db.media.find({}, {"updated": 1})}
 
     def create_notif(self, ym):
         from pymongo.errors import DuplicateKeyError

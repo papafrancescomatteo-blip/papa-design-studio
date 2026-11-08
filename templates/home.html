@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0d10">
+<title>Claudio Papa · Industrial designer · Papa Design Studio</title>
+<meta name="description" content="Papa Design Studio di Claudio Papa: industrial designer e art director. Wellness, bagno e outdoor per Albatros, Disenia e altri marchi. San Daniele del Friuli (UD).">
+<meta property="og:title" content="Claudio Papa · Papa Design Studio">
+<meta property="og:description" content="Il design si fa, si costruisce, si progetta. Wellness, bagno e outdoor made in Italy.">
+<meta property="og:type" content="website">
+<link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Papa Design Studio","legalName":"Papa Design Studio di Claudio Papa s.a.s",
+ "email":"papadesignstudio@gmail.com","telephone":"+39 335 62 65 844","vatID":"IT03206160305",
+ "address":{"@type":"PostalAddress","streetAddress":"Via Tarcento, 1","addressLocality":"San Daniele del Friuli","addressRegion":"UD","addressCountry":"IT"},
+ "founder":{"@type":"Person","name":"Claudio Papa","jobTitle":"Industrial designer"}}
+</script>
+</head>
+<body class="grain home">
+
+<header class="hnav" id="hnav"><div class="wrap">
+  <a class="brand" href="#top" aria-label="Papa Design Studio"><img src="{{ url_for('static', filename='logo.png') }}" alt="Papa Design Studio"></a>
+  <nav id="menu" aria-label="Principale">
+    <a href="#chi">Chi è</a><a href="#percorso">Percorso</a><a href="#prodotti">Prodotti</a>
+    <a href="#premi">Premi</a><a href="#contatti">Contatti</a>
+  </nav>
+  <a class="btn small ghost" href="/login">Area riservata</a>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+</div></header>
+
+<!-- ============================ HERO ============================ -->
+<section class="hero-home" id="top">
+  <div class="ripples" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="wrap hero-in">
+    <p class="eyebrow reveal">Industrial designer · Art director</p>
+    <h1 class="mega reveal" style="--d:.1s">Claudio <em>Papa</em></h1>
+    <p class="lead reveal" style="--d:.2s">«Si fa, si costruisce, si progetta: nel design ci si deve sporcare le mani.»</p>
+    <div class="cta reveal" style="--d:.3s">
+      <a class="btn primary shine" href="#prodotti">Scopri i progetti</a>
+      <a class="btn" href="#contatti">Contattaci</a>
+    </div>
+    <div class="facts reveal" style="--d:.4s">
+      <div><strong data-n="1990" data-f="plain">0</strong><span>diploma in Industrial Design, ISIA Roma</span></div>
+      <div><strong data-n="35" data-f="plain">0</strong><span>prodotti a catalogo su Archiproducts</span></div>
+      <div><strong data-n="2" data-f="plain">0</strong><span>finali al Compasso d’Oro ADI (2020 e 2022)</span></div>
+      <div><strong data-n="10" data-f="plain">0</strong><span>università cinesi, lezioni nel 2017</span></div>
+    </div>
+  </div>
+  <a class="scroll" href="#chi" aria-label="Scorri">↓</a>
+</section>
+
+<!-- ============================ CHI È ============================ -->
+<section class="sec" id="chi"><div class="wrap two">
+  <div class="rv">
+    <p class="eyebrow">Chi è</p>
+    <h2 class="h2">Un designer che progetta <em>con le mani</em>, dall’idea al prodotto.</h2>
+    {% if 'ritratto' in media %}
+    <figure class="portrait"><img src="/media/ritratto?v={{ media['ritratto'] }}" alt="Claudio Papa" loading="lazy">
+      <figcaption>Claudio Papa</figcaption></figure>
+    {% endif %}
+  </div>
+  <div class="rv prose" style="--d:.1s">
+    <p>Claudio Papa è un <b>industrial designer</b> nato a Catania nel 1964, diplomato in Industrial Design all’I.S.I.A. di Roma. Vive e lavora a San Daniele del Friuli, dove ha sede <b>Papa Design Studio</b>.</p>
+    <p>Progetta per aziende italiane e internazionali del mondo del <b>bagno e del wellness</b> e di altri settori, seguendo ogni fase dello sviluppo del prodotto. È <b>art director di Albatros</b> dal 2018 e firma la <b>Wellness Collection di Disenia</b> (IdeaGroup).</p>
+    <p>Accanto al lavoro di progetto insegna: all’<b>Accademia di Belle Arti di Udine</b> dirige dal 2016 il dipartimento di Progettazione ed Arti applicate. È socio ADI e vicepresidente della delegazione Friuli Venezia Giulia.</p>
+  </div>
+</div></section>
+
+<!-- ============================ PERCORSO ============================ -->
+<section class="sec alt" id="percorso"><div class="wrap">
+  <p class="eyebrow rv">Percorso</p>
+  <h2 class="h2 rv">Dalle due ruote alle <em>vasche</em>.</h2>
+  <ol class="timeline">
+    <li class="rv"><time>1964</time><p>Nasce a Catania.</p></li>
+    <li class="rv"><time>1990</time><p>Si diploma in Industrial Design all’I.S.I.A. di Roma; la tesi, uno scooter, nasce in collaborazione con <b>Piaggio</b>.</p></li>
+    <li class="rv"><time>Anni ’90</time><p>Due anni al Centro Stile Piaggio Veicoli Europei. Parallelamente i primi progetti per arredo d’interni e arredo bagno; circa otto anni al fianco di Carlo Urbinati per <b>Jacuzzi</b>.</p></li>
+    <li class="rv"><time>2003</time><p>Docente di tecnologie sperimentali e progettazione alla <b>Sapienza</b> di Roma.</p></li>
+    <li class="rv"><time>2013</time><p>Cura la rubrica di design sulla rivista <b>Vista Casa</b>.</p></li>
+    <li class="rv"><time>2015</time><p>Docente di design universale e interior design allo <b>IED di Venezia</b>.</p></li>
+    <li class="rv"><time>2016</time><p>Dirige il dipartimento di Progettazione ed Arti applicate dell’<b>Accademia di Belle Arti di Udine</b> e conduce una trasmissione radiofonica sul design.</p></li>
+    <li class="rv"><time>2017</time><p>Porta il design italiano in dieci università cinesi.</p></li>
+    <li class="rv"><time>2018</time><p>Diventa art director di <b>Albatros</b>, storica azienda wellness di Spilimbergo (PN).</p></li>
+    <li class="rv"><time>2023</time><p>Presenta a Cersaie la <b>Wellness Collection</b> di Disenia.</p></li>
+  </ol>
+</div></section>
+
+<!-- ============================ PRODOTTI ============================ -->
+<section class="sec" id="prodotti"><div class="wrap">
+  <p class="eyebrow rv">Prodotti</p>
+  <h2 class="h2 rv">Acqua, vapore, fuoco: <em>il benessere come progetto</em>.</h2>
+  <p class="sub rv">Una selezione dei progetti più rappresentativi. Il catalogo completo conta 35 prodotti.</p>
+
+  <div class="grid4">
+    <article class="pcard rv{% if 'albatros' in media %} has-img{% endif %}">
+      {% if 'albatros' in media %}<div class="pimg"><img src="/media/albatros?v={{ media['albatros'] }}" alt="Prodotti Albatros disegnati da Claudio Papa" loading="lazy"></div>{% endif %}
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 36c0-5 5-5 5-10s-5-5-5-10M24 36c0-5 5-5 5-10s-5-5-5-10M34 36c0-5 5-5 5-10s-5-5-5-10"/></svg>
+      <small>Albatros · Spilimbergo (PN)</small>
+      <h3>Wellness e bagno</h3>
+      <p>Il lavoro come art director dal 2018, con il sistema brevettato <b>Secret System</b>.</p>
+      <ul>
+        <li>Hammam Plus <i>Home e Contract</i></li><li>Modula Pool <i>minipiscina a sfioro</i></li>
+        <li>Modula S e S Combi <i>saune</i></li><li>Modula F e Wall <i>vasche</i></li>
+        <li>Ethos <i>minipiscina e vasca</i></li><li>Syraka · Graphic · Soreha Wall</li>
+      </ul>
+    </article>
+    <article class="pcard rv{% if 'disenia' in media %} has-img{% endif %}" style="--d:.08s">
+      {% if 'disenia' in media %}<div class="pimg"><img src="/media/disenia?v={{ media['disenia'] }}" alt="The Wellness Collection di Disenia" loading="lazy"></div>{% endif %}
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 30c4-4 8-4 12 0s8 4 12 0 8-4 12 0M6 38c4-4 8-4 12 0s8 4 12 0 8-4 12 0"/><path d="M8 22V12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v10"/></svg>
+      <small>Disenia · IdeaGroup</small>
+      <h3>The Wellness Collection</h3>
+      <p>Un sistema coordinato di minipiscine, vasche e accessori, per interni ed esterni. Tutto made in Italy.</p>
+      <ul>
+        <li>Élite: Helba 240, Helba 210, Gilium</li><li>Linos e Kyra <i>minipiscine</i></li>
+        <li>Aretusa · Fonte · Ellisse Plus · Dhelia <i>vasche</i></li><li>Solaris · Atollo · Lido <i>accessori</i></li>
+        <li>Libeccio e Grecale <i>docce outdoor</i></li><li>Lumina <i>braciere</i></li>
+      </ul>
+    </article>
+    <article class="pcard rv{% if 'sanitari' in media %} has-img{% endif %}" style="--d:.16s">
+      {% if 'sanitari' in media %}<div class="pimg"><img src="/media/sanitari?v={{ media['sanitari'] }}" alt="Sanitari disegnati da Claudio Papa" loading="lazy"></div>{% endif %}
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h32l-3 14a6 6 0 0 1-6 5H17a6 6 0 0 1-6-5z"/><path d="M14 20v-6a6 6 0 0 1 6-6h2"/></svg>
+      <small>Azzurra Ceramica · Ege Vitrifiye</small>
+      <h3>Sanitari e ceramica</h3>
+      <p>Linee di sanitari premiate a livello europeo.</p>
+      <ul>
+        <li>Class 05 <i>Azzurra Ceramica</i></li><li>Finikia <i>Ege Vitrifiye</i></li><li>Katamaran <i>Ege Vitrifiye</i></li>
+      </ul>
+    </article>
+    <article class="pcard rv{% if 'rubinetteria' in media %} has-img{% endif %}" style="--d:.24s">
+      {% if 'rubinetteria' in media %}<div class="pimg"><img src="/media/rubinetteria?v={{ media['rubinetteria'] }}" alt="Rubinetteria e vasche disegnate da Claudio Papa" loading="lazy"></div>{% endif %}
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8a8 8 0 0 0-8 8v4"/><path d="M14 20h16"/><path d="M22 28c0 4-3 6-3 9a3 3 0 0 0 6 0c0-3-3-5-3-9z"/></svg>
+      <small>Ama Luxury Shower · Glass1989</small>
+      <h3>Rubinetteria e vasche</h3>
+      <p>Dettagli in acciaio inox e idromassaggio.</p>
+      <ul>
+        <li>Link <i>miscelatori in acciaio inox</i></li><li>Eden <i>vasca angolare idromassaggio</i></li>
+      </ul>
+    </article>
+  </div>
+  <p class="more rv"><a class="btn" href="https://www.archiproducts.com/it/designer/claudio-papa" target="_blank" rel="noopener">Vedi tutti i 35 prodotti su Archiproducts ↗</a></p>
+</div></section>
+
+<!-- ============================ PREMI ============================ -->
+<section class="sec alt" id="premi"><div class="wrap">
+  <p class="eyebrow rv">Riconoscimenti</p>
+  <h2 class="h2 rv">Premi che <em>raccontano</em> il lavoro.</h2>
+  <ul class="awards">
+    <li class="rv"><time>2020 · 2022</time><div><b>Finalista Compasso d’Oro ADI</b><span>Il più autorevole premio italiano di design</span></div></li>
+    <li class="rv"><time>2019</time><div><b>ADI Ceramics &amp; Bathroom Design Award, innovazione</b><span>Secret System · Syraka e Modula Pool (Albatros) · Cersaie</span></div></li>
+    <li class="rv"><time>2019</time><div><b>European Product Design Award</b><span>Home Interiors Product · Hammam Plus (Albatros)</span></div></li>
+    <li class="rv"><time>2018</time><div><b>ADI Ceramics &amp; Bathroom Design Award</b><span>Hammam Plus (Albatros) · poi selezionato per l’ADI Design Index 2019</span></div></li>
+    <li class="rv"><time>2017 · 2018</time><div><b>European Product Design Award</b><span>Finikia e Katamaran (Ege Vitrifiye)</span></div></li>
+    <li class="rv"><time>2006 · 2007</time><div><b>Best Bathroom Design</b><span>Class 05 (Azzurra Ceramica)</span></div></li>
+  </ul>
+</div></section>
+
+<!-- ============================ STUDIO ============================ -->
+<section class="sec" id="studio"><div class="wrap two">
+  <div class="rv">
+    <p class="eyebrow">Lo studio</p>
+    <h2 class="h2">Papa Design Studio, <em>a San Daniele del Friuli</em>.</h2>
+  </div>
+  <div class="rv prose" style="--d:.1s">
+    <p>Lo studio accompagna le aziende dall’idea al prodotto finito: ricerca, progetto, sviluppo e direzione artistica, con particolare esperienza nel settore bagno, wellness e outdoor.</p>
+    <p>Insegnamento, ricerca e divulgazione fanno parte del lavoro: lezioni in Italia e all’estero, una rubrica su <b>Vista Casa</b>, una trasmissione radiofonica sul design e la partecipazione a eventi come il Fuorisalone di Milano.</p>
+    <p class="ids">Papa Design Studio di Claudio Papa s.a.s · C.F. 03206160305 · P.IVA 03206160305</p>
+  </div>
+</div></section>
+
+<!-- ============================ CONTATTI ============================ -->
+<section class="sec contacts" id="contatti"><div class="wrap">
+  <p class="eyebrow rv">Contatti</p>
+  <h2 class="h2 rv">Parliamo del <em>tuo progetto</em>.</h2>
+  <div class="cgrid">
+    <a class="ccard mail rv" href="mailto:papadesignstudio@gmail.com"><small>Email dello studio</small><b>papadesignstudio@gmail.com</b></a>
+    <a class="ccard mail rv" style="--d:.06s" href="mailto:claudiopapadesigner@gmail.com"><small>Email di Claudio</small><b>claudiopapadesigner@gmail.com</b></a>
+    <a class="ccard rv" style="--d:.12s" href="tel:+393356265844"><small>Telefono</small><b>+39 335 62 65 844</b></a>
+    <a class="ccard rv" style="--d:.18s" href="https://www.google.com/maps/search/?api=1&query=Via+Tarcento+1+San+Daniele+del+Friuli" target="_blank" rel="noopener"><small>Studio</small><b>Via Tarcento, 1<br>33038 San Daniele del Friuli (UD)</b></a>
+  </div>
+  <h3 class="h3 rv">Online</h3>
+  <div class="links rv">
+    <a href="http://www.claudiopapadesigner.it" target="_blank" rel="noopener">Sito di Claudio Papa ↗</a>
+    <a href="https://www.archiproducts.com/it/designer/claudio-papa" target="_blank" rel="noopener">Archiproducts ↗</a>
+    <a href="https://www.adi-design.org/profilo.php?q=id%3D4687&labelportfolio=info" target="_blank" rel="noopener">ADI · Associazione per il Disegno Industriale ↗</a>
+    <a href="https://www.fuorisalone.it/en/designer/1589/Claudio-Papa-designer-ABA-Udine" target="_blank" rel="noopener">Fuorisalone ↗</a>
+    <a href="https://www.linkedin.com/in/claudio-papa-50628418/" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</div></section>
+
+<footer class="site-foot"><div class="wrap">
+  <img src="{{ url_for('static', filename='logo-gold.png') }}" alt="Papa Design Studio">
+  <address>
+    <b>Papa Design Studio</b> di Claudio Papa s.a.s<br>
+    Via Tarcento, 1 · S. Daniele del Friuli (UD)<br>
+    papadesignstudio@gmail.com · T. +39 335 62 65 844<br>
+    C.F. 03206160305 · P.IVA 03206160305
+  </address>
+  <a class="btn small ghost staff" href="/login">Area riservata</a>
+</div></footer>
+
+<script src="{{ url_for('static', filename='home.js') }}"></script>
+</body>
+</html>

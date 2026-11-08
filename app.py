@@ -11,6 +11,7 @@ from email.message import EmailMessage
 from functools import wraps
 from zoneinfo import ZoneInfo
 
+from PIL import Image, ImageOps
 from flask import (Flask, abort, jsonify, redirect, render_template, request, send_file,
                    session, url_for)
 from werkzeug.security import check_password_hash
@@ -31,7 +32,9 @@ app.config.update(
     SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SECURE", "1") == "1",
     PERMANENT_SESSION_LIFETIME=dt.timedelta(days=30),
     JSON_AS_ASCII=False,
+    MAX_CONTENT_LENGTH=15 * 1024 * 1024,
 )
+Image.MAX_IMAGE_PIXELS = 80_000_000
 if not os.environ.get("SECRET_KEY"):
     print("ATTENZIONE: SECRET_KEY non impostata: le sessioni si azzerano a ogni riavvio.")
 
@@ -289,11 +292,90 @@ def login():
 def logout():
     check_csrf()
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("home"))
 
 
 # ----------------------------------------------------------------------------- pagine
+MEDIA_SLOTS = {
+    "ritratto": "Ritratto di Claudio Papa",
+    "albatros": "Prodotti Albatros (wellness e bagno)",
+    "disenia": "The Wellness Collection · Disenia",
+    "sanitari": "Sanitari e ceramica",
+    "rubinetteria": "Rubinetteria e vasche",
+}
+STATIC_IMG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "img")
+
+
+def media_versions():
+    """slot -> versione (per la cache). Prima le foto caricate dal sito, poi quelle messe in static/img."""
+    out = {}
+    for slot in MEDIA_SLOTS:
+        p = os.path.join(STATIC_IMG, f"{slot}.jpg")
+        if os.path.exists(p):
+            out[slot] = int(os.path.getmtime(p))
+    out.update(store.media_info())
+    return out
+
+
 @app.route("/")
+def home():
+    return render_template("home.html", media=media_versions())
+
+
+@app.get("/media/<slot>")
+def media_get(slot):
+    if slot not in MEDIA_SLOTS:
+        abort(404)
+    doc = store.get_media(slot)
+    if doc:
+        resp = send_file(io.BytesIO(doc["data"]), mimetype=doc["mime"])
+    else:
+        p = os.path.join(STATIC_IMG, f"{slot}.jpg")
+        if not os.path.exists(p):
+            abort(404)
+        resp = send_file(p, mimetype="image/jpeg")
+    resp.headers["Cache-Control"] = "public, max-age=31536000, immutable" if request.args.get("v") else "public, max-age=300"
+    return resp
+
+
+@app.get("/api/media")
+@login_required(api=True)
+def api_media_list():
+    info = media_versions()
+    return jsonify([{"slot": k, "label": v, "version": info.get(k)} for k, v in MEDIA_SLOTS.items()])
+
+
+@app.post("/api/media/<slot>")
+@login_required(api=True)
+def api_media_put(slot):
+    if slot not in MEDIA_SLOTS:
+        abort(404)
+    f = request.files.get("file")
+    if not f:
+        return jsonify(error="Nessun file ricevuto"), 400
+    try:
+        img = Image.open(f.stream)
+        img.load()
+        img = ImageOps.exif_transpose(img).convert("RGB")
+    except Exception:  # noqa: BLE001
+        return jsonify(error="Il file non è un'immagine valida (usa JPG, PNG o WebP)"), 400
+    img.thumbnail((1800, 1800), Image.LANCZOS)
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", quality=86, optimize=True, progressive=True)
+    store.set_media(slot, buf.getvalue(), "image/jpeg")
+    return jsonify(ok=True, version=store.media_info().get(slot))
+
+
+@app.delete("/api/media/<slot>")
+@login_required(api=True)
+def api_media_del(slot):
+    if slot not in MEDIA_SLOTS:
+        abort(404)
+    store.delete_media(slot)
+    return jsonify(ok=True)
+
+
+@app.route("/app")
 @login_required()
 def index():
     return render_template("index.html", csrf=csrf_token(), month=current_month(),

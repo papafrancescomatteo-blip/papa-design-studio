@@ -21,3 +21,8 @@ Se il servizio dormiva, la chiusura viene comunque recuperata al primo accesso o
 
 ## Modello Excel
 `assets/template.xlsx` è il file originale: logo, intestazione e blocco firme vengono da lì.
+
+## Indirizzi
+- `/` home pubblica (chi è Claudio Papa, percorso, prodotti, premi, contatti)
+- `/login` accesso riservato
+- `/app` gestione note spese (solo dopo il login)
