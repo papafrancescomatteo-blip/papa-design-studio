@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Note spese · Papa Design Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-csrf="{{ csrf }}" data-month="{{ month }}" data-mail="{{ 1 if mail_ok else 0 }}">
+<header class="top"><div class="wrap">
+  <div class="brand"><b>Papa</b><span>Design Studio · Finanze</span></div>
+  <button class="icon-btn" id="bellBtn" aria-label="Notifiche" title="Notifiche">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+    <span class="badge hidden" id="bellBadge">0</span>
+  </button>
+  <button class="icon-btn" id="setBtn" aria-label="Impostazioni" title="Impostazioni">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+  </button>
+  <form method="post" action="/logout"><input type="hidden" name="csrf" value="{{ csrf }}">
+    <button class="btn ghost small" type="submit">Esci</button></form>
+</div>
+<div class="drop hidden" id="bellDrop"><header>Notifiche</header><div id="notifList"></div></div>
+</header>
+
+<main class="wrap">
+  <div id="banner"></div>
+
+  <div class="bar">
+    <div class="monthnav">
+      <button class="icon-btn" id="prevM" aria-label="Mese precedente">‹</button>
+      <button class="icon-btn" id="nextM" aria-label="Mese successivo">›</button>
+    </div>
+    <h1 id="monthTitle">…</h1>
+    <span class="sp"></span>
+    <a class="btn" id="dlBtn" href="#">⬇ Scarica Excel</a>
+    <button class="btn primary" id="addBtn">＋ Aggiungi spesa</button>
+  </div>
+
+  <section class="stats" id="stats"></section>
+  <section id="days"></section>
+
+  <div class="section-title"><h2>Note spese mensili</h2>
+    <span class="muted">Ogni mese chiuso viene preparato automaticamente a mezzanotte.</span></div>
+  <section class="archive" id="archive"></section>
+</main>
+
+<div id="modalRoot"></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
