@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: pds-note-spese
+    name: papa-design-studio
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt

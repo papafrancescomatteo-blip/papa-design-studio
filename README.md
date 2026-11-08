@@ -16,7 +16,7 @@ Sito privato (Flask + MongoDB) per registrare le spese e ottenere a fine mese l'
 Il server controlla ogni 30 secondi; allo scoccare del nuovo mese (ora di Roma) crea la notifica nel sito
 e invia l'email con l'Excel. Sul piano gratuito Render il servizio va in pausa: per farlo scattare
 puntualmente a mezzanotte crea su https://cron-job.org un job ogni 10 minuti che chiama
-`https://TUO-SITO.onrender.com/api/cron/tick?token=IL_TUO_CRON_TOKEN`.
+`https://papa-design-studio.onrender.com/api/cron/tick?token=IL_TUO_CRON_TOKEN`.
 Se il servizio dormiva, la chiusura viene comunque recuperata al primo accesso o al primo ping.
 
 ## Modello Excel
