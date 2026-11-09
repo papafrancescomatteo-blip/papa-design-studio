@@ -1,0 +1,29 @@
+{% extends "public_base.html" %}
+{% block title %}News, riviste e Cersaie · Claudio Papa{% endblock %}
+{% block desc %}Notizie, servizi sulle riviste di design, presentazioni a Cersaie ed eventi: tutto quello che si scrive di Claudio Papa e dei suoi progetti.{% endblock %}
+{% block body %}
+<section class="pagehead"><div class="wrap">
+  <p class="eyebrow reveal">News e riviste</p>
+  <h1 class="h2 reveal" style="--d:.08s">Di lui hanno <em>scritto</em>.</h1>
+  <p class="sub reveal" style="--d:.16s">Servizi sulle riviste di design, presentazioni a Cersaie, premi ed eventi: l’archivio delle notizie sui progetti di Claudio Papa.</p>
+  <div class="chips" id="newsFilter">
+    <button class="on" data-k="">Tutto</button>
+    {% for k in kinds %}<button data-k="{{ k }}">{{ {'Rivista':'Riviste'}.get(k, k) }}</button>{% endfor %}
+  </div>
+</div></section>
+<section class="sec tight"><div class="wrap">
+  <div class="ngrid" id="newsGrid">
+    {% for n in g.news %}{% set mk = 'c-' ~ n._id %}
+    <article class="ncard rv" data-k="{{ n.kind }}">
+      {% if mk in media %}<div class="nimg"><img src="/media/{{ mk }}?v={{ media[mk] }}" alt="{{ n.title }}" loading="lazy"></div>{% endif %}
+      <div class="nbody">
+        <div class="nmeta"><span class="tag k-{{ n.kind|lower }}">{{ n.kind }}</span><span>{{ n.source }}</span>{% if n.when %}<span>· {{ n.when }}</span>{% endif %}</div>
+        <h3>{{ n.title }}</h3>
+        {% if n.text %}<p>{{ n.text }}</p>{% endif %}
+        {% if n.url %}<a class="plink" href="{{ n.url }}" target="_blank" rel="noopener">Leggi ↗</a>{% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</div></section>
+{% endblock %}

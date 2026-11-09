@@ -1,138 +1,82 @@
-{% macro icon(name) -%}
-{%- if name == 'vapore' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 36c0-5 5-5 5-10s-5-5-5-10M24 36c0-5 5-5 5-10s-5-5-5-10M34 36c0-5 5-5 5-10s-5-5-5-10"/></svg>
-{%- elif name == 'ceramica' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h32l-3 14a6 6 0 0 1-6 5H17a6 6 0 0 1-6-5z"/><path d="M14 20v-6a6 6 0 0 1 6-6h2"/></svg>
-{%- elif name == 'doccia' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8a8 8 0 0 0-8 8v4"/><path d="M14 20h16"/><path d="M22 28c0 4-3 6-3 9a3 3 0 0 0 6 0c0-3-3-5-3-9z"/></svg>
-{%- elif name == 'fuoco' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6c2 7 10 10 10 20a10 10 0 0 1-20 0c0-5 3-7 4-11 2 2 3 3 4 5 1-4 1-8 2-14z"/></svg>
-{%- else -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 30c4-4 8-4 12 0s8 4 12 0 8-4 12 0M6 38c4-4 8-4 12 0s8 4 12 0 8-4 12 0"/><path d="M8 22V12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v10"/></svg>
-{%- endif -%}
-{%- endmacro %}
-<!doctype html>
-<html lang="it">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0c0d10">
-<title>Claudio Papa · Industrial designer · Papa Design Studio</title>
-<meta name="description" content="Papa Design Studio di Claudio Papa: industrial designer e art director. Wellness, bagno e outdoor per Albatros, Disenia e altri marchi. San Daniele del Friuli (UD).">
-<meta property="og:title" content="Claudio Papa · Papa Design Studio">
-<meta property="og:description" content="Il design si fa, si costruisce, si progetta. Wellness, bagno e outdoor made in Italy.">
-<meta property="og:type" content="website">
-<link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% extends "public_base.html" %}
+{% block head %}
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Papa Design Studio","legalName":"Papa Design Studio di Claudio Papa s.a.s",
  "email":"papadesignstudio@gmail.com","telephone":"+39 335 62 65 844","vatID":"IT03206160305",
  "address":{"@type":"PostalAddress","streetAddress":"Via Tarcento, 1","addressLocality":"San Daniele del Friuli","addressRegion":"UD","addressCountry":"IT"},
  "founder":{"@type":"Person","name":"Claudio Papa","jobTitle":"Industrial designer"}}
 </script>
-</head>
-<body class="grain home">
-
-<header class="hnav" id="hnav"><div class="wrap">
-  <a class="brand" href="#top" aria-label="Papa Design Studio"><img src="{{ url_for('static', filename='logo.png') }}" alt="Papa Design Studio"></a>
-  <nav id="menu" aria-label="Principale">
-    <a href="#chi">Chi è</a><a href="#percorso">Percorso</a><a href="#prodotti">Prodotti</a>
-    <a href="#premi">Premi</a><a href="#riviste">Riviste</a><a href="#contatti">Contatti</a>
-  </nav>
-  <a class="btn small ghost" href="/login">Area riservata</a>
-  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
-</div></header>
-
-<!-- ============================ HERO ============================ -->
+{% endblock %}
+{% block body %}
 <section class="hero-home" id="top">
   <div class="ripples" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="wrap hero-in">
     <p class="eyebrow reveal">Industrial designer · Art director</p>
     <h1 class="mega reveal" style="--d:.1s">Claudio <em>Papa</em></h1>
-    <p class="lead reveal" style="--d:.2s">«Si fa, si costruisce, si progetta: nel design ci si deve sporcare le mani.»</p>
+    <p class="lead reveal" style="--d:.2s">Progettiamo bagno, wellness e outdoor per i migliori marchi italiani. «Si fa, si costruisce, si progetta.»</p>
     <div class="cta reveal" style="--d:.3s">
-      <a class="btn primary shine" href="#prodotti">Scopri i progetti</a>
-      <a class="btn" href="#contatti">Contattaci</a>
+      <a class="btn primary shine" href="/prodotti">Scopri i prodotti</a>
+      <a class="btn" href="/#contatti">Contattaci</a>
     </div>
     <div class="facts reveal" style="--d:.4s">
-      <div><strong data-n="1990" data-f="plain">0</strong><span>diploma in Industrial Design, ISIA Roma</span></div>
-      <div><strong data-n="35" data-f="plain">0</strong><span>prodotti a catalogo su Archiproducts</span></div>
-      <div><strong data-n="2" data-f="plain">0</strong><span>finali al Compasso d’Oro ADI (2020 e 2022)</span></div>
-      <div><strong data-n="10" data-f="plain">0</strong><span>università cinesi, lezioni nel 2017</span></div>
+      <div><strong data-n="{{ g.catalog|length }}">0</strong><span>prodotti progettati</span></div>
+      <div><strong data-n="{{ brands|length }}">0</strong><span>marchi con cui collabora</span></div>
+      <div><strong data-n="{{ g.award|length }}">0</strong><span>premi e riconoscimenti</span></div>
+      <div><strong data-n="2000">0</strong><span>anno d’inizio con Albatros</span></div>
     </div>
   </div>
   <a class="scroll" href="#chi" aria-label="Scorri">↓</a>
 </section>
 
-<!-- ============================ CHI È ============================ -->
 <section class="sec" id="chi"><div class="wrap two">
   <div class="rv">
     <p class="eyebrow">Chi è</p>
     <h2 class="h2">Un designer che progetta <em>con le mani</em>, dall’idea al prodotto.</h2>
     {% if 'ritratto' in media %}
-    <figure class="portrait"><img src="/media/ritratto?v={{ media['ritratto'] }}" alt="Claudio Papa" loading="lazy">
-      <figcaption>Claudio Papa</figcaption></figure>
+    <figure class="portrait"><img src="/media/ritratto?v={{ media['ritratto'] }}" alt="Claudio Papa" loading="lazy"><figcaption>Claudio Papa</figcaption></figure>
     {% endif %}
   </div>
   <div class="rv prose" style="--d:.1s">
     <p>Claudio Papa è un <b>industrial designer</b> nato a Catania nel 1964, diplomato in Industrial Design all’I.S.I.A. di Roma. Vive e lavora a San Daniele del Friuli, dove ha sede <b>Papa Design Studio</b>.</p>
-    <p>Progetta per aziende italiane e internazionali del mondo del <b>bagno e del wellness</b> e di altri settori, seguendo ogni fase dello sviluppo del prodotto. È <b>art director di Albatros</b> dal 2018 e firma la <b>Wellness Collection di Disenia</b> (IdeaGroup).</p>
+    <p>Progetta per aziende italiane e internazionali del <b>bagno e del wellness</b>, seguendo ogni fase dello sviluppo del prodotto. È <b>art director di Albatros</b> dal 2018 e firma <b>The Wellness Collection di Disenia</b> (IdeaGroup).</p>
     <p>Accanto al lavoro di progetto insegna: all’<b>Accademia di Belle Arti di Udine</b> dirige dal 2016 il dipartimento di Progettazione ed Arti applicate. È socio ADI e vicepresidente della delegazione Friuli Venezia Giulia.</p>
   </div>
 </div></section>
 
-<!-- ============================ PERCORSO ============================ -->
-<section class="sec alt" id="percorso"><div class="wrap">
-  <p class="eyebrow rv">Percorso</p>
-  <h2 class="h2 rv">Dalle due ruote alle <em>vasche</em>.</h2>
-  <ol class="timeline">
-    {% for t in g.timeline %}<li class="rv"><time>{{ t.year }}</time><p>{{ t.text }}</p></li>{% endfor %}
-  </ol>
-</div></section>
-
-<!-- ============================ PRODOTTI ============================ -->
-<section class="sec" id="prodotti"><div class="wrap">
+<section class="sec alt" id="prodotti"><div class="wrap">
   <p class="eyebrow rv">Prodotti</p>
   <h2 class="h2 rv">Acqua, vapore, fuoco: <em>il benessere come progetto</em>.</h2>
-  <p class="sub rv">Una selezione dei progetti più rappresentativi. Il catalogo completo conta 35 prodotti.</p>
-
+  <p class="sub rv">I marchi per cui Claudio Papa ha disegnato. Ogni scheda apre il catalogo completo.</p>
   <div class="grid4">
-    {% for p in g.product %}{% set mk = 'c-' ~ p._id %}
-    <article class="pcard rv{% if mk in media %} has-img{% endif %}" style="--d:{{ (loop.index0 % 4) * 0.08 }}s">
-      {% if mk in media %}<div class="pimg"><img src="/media/{{ mk }}?v={{ media[mk] }}" alt="{{ p.title }}" loading="lazy"></div>{% endif %}
-      {{ icon(p.icon) }}
-      <small>{{ p.brand }}</small>
-      <h3>{{ p.title }}</h3>
-      <p>{{ p.text }}</p>
-      {% if p["items"] %}<ul>
-        {% for line in p['items'] %}{% set parts = line.split(' | ') %}<li>{{ parts[0] }}{% if parts|length > 1 %}<i>{{ parts[1] }}</i>{% endif %}</li>{% endfor %}
-      </ul>{% endif %}
-      {% if p.url %}<a class="plink" href="{{ p.url }}" target="_blank" rel="noopener">{{ p.urllabel or 'Scopri di più' }} ↗</a>{% endif %}
-    </article>
+    {% for brand, items in brands.items() %}
+    <a class="pcard rv" href="/prodotti#b{{ loop.index }}" style="--d:{{ (loop.index0 % 4) * 0.08 }}s">
+      <small>{{ items|length }} {{ 'prodotto' if items|length == 1 else 'prodotti' }}</small>
+      <h3>{{ brand }}</h3>
+      <p>{{ brand_info.get(brand, '') }}</p>
+      <ul>{% for p in items[:4] %}<li>{{ p.title }}<i>{{ p.category }}</i></li>{% endfor %}</ul>
+      <span class="plink">Vedi tutti →</span>
+    </a>
     {% endfor %}
   </div>
-  <p class="more rv"><a class="btn" href="https://www.archiproducts.com/it/designer/claudio-papa" target="_blank" rel="noopener">Vedi tutti i 35 prodotti su Archiproducts ↗</a></p>
+  <p class="more rv"><a class="btn primary" href="/prodotti">Catalogo completo · {{ g.catalog|length }} prodotti</a></p>
 </div></section>
 
-<!-- ============================ PREMI ============================ -->
-<section class="sec alt" id="premi"><div class="wrap">
-  <p class="eyebrow rv">Riconoscimenti</p>
-  <h2 class="h2 rv">Premi che <em>raccontano</em> il lavoro.</h2>
-  <ul class="awards">
-    {% for a in g.award %}<li class="rv"><time>{{ a.year }}</time><div><b>{{ a.title }}</b><span>{{ a.detail }}</span></div></li>{% endfor %}
-  </ul>
-</div></section>
-
-<!-- ============================ RIVISTE & CERSAIE ============================ -->
-<section class="sec" id="riviste"><div class="wrap">
-  <p class="eyebrow rv">Riviste, fiere ed eventi</p>
-  <h2 class="h2 rv">Di lui hanno <em>scritto</em>.</h2>
-  <p class="sub rv">Servizi sulle riviste di design, presentazioni a Cersaie e appuntamenti del Fuorisalone.</p>
-  <div class="chips rv" id="newsFilter">
-    <button class="on" data-k="">Tutto</button>
-    {% for k in ['Rivista','Cersaie','Evento','Web'] %}{% if g.news|selectattr('kind','equalto',k)|list %}<button data-k="{{ k }}">{{ 'Riviste' if k == 'Rivista' else k }}</button>{% endif %}{% endfor %}
+<section class="sec" id="aziende"><div class="wrap">
+  <p class="eyebrow rv">Per le aziende</p>
+  <h2 class="h2 rv">Dal primo schizzo al <em>prodotto finito</em>.</h2>
+  <div class="grid3">
+    <div class="svc rv"><b>Design di prodotto</b><p>Ricerca, concept e progetto di vasche, minipiscine, saune, docce, sanitari e complementi.</p></div>
+    <div class="svc rv" style="--d:.08s"><b>Art direction</b><p>Direzione artistica di collezioni e linee prodotto, come per Albatros dal 2018.</p></div>
+    <div class="svc rv" style="--d:.16s"><b>Sviluppo e industrializzazione</b><p>Un solo interlocutore in tutte le fasi, fino alla presentazione in fiera, a Cersaie e al Fuorisalone.</p></div>
   </div>
-  <div class="ngrid" id="newsGrid">
-    {% for n in g.news %}{% set mk = 'c-' ~ n._id %}
-    <article class="ncard rv" data-k="{{ n.kind }}">
+</div></section>
+
+<section class="sec alt" id="news"><div class="wrap">
+  <p class="eyebrow rv">News</p>
+  <h2 class="h2 rv">Ultime <em>notizie</em>.</h2>
+  <div class="ngrid">
+    {% for n in g.news[:3] %}{% set mk = 'c-' ~ n._id %}
+    <article class="ncard rv">
       {% if mk in media %}<div class="nimg"><img src="/media/{{ mk }}?v={{ media[mk] }}" alt="{{ n.title }}" loading="lazy"></div>{% endif %}
       <div class="nbody">
         <div class="nmeta"><span class="tag k-{{ n.kind|lower }}">{{ n.kind }}</span><span>{{ n.source }}</span>{% if n.when %}<span>· {{ n.when }}</span>{% endif %}</div>
@@ -143,22 +87,25 @@
     </article>
     {% endfor %}
   </div>
+  <p class="more rv"><a class="btn" href="/news">Tutte le news, riviste e Cersaie →</a></p>
 </div></section>
 
-<!-- ============================ STUDIO ============================ -->
-<section class="sec" id="studio"><div class="wrap two">
-  <div class="rv">
-    <p class="eyebrow">Lo studio</p>
-    <h2 class="h2">Papa Design Studio, <em>a San Daniele del Friuli</em>.</h2>
-  </div>
-  <div class="rv prose" style="--d:.1s">
-    <p>Lo studio accompagna le aziende dall’idea al prodotto finito: ricerca, progetto, sviluppo e direzione artistica, con particolare esperienza nel settore bagno, wellness e outdoor.</p>
-    <p>Insegnamento, ricerca e divulgazione fanno parte del lavoro: lezioni in Italia e all’estero, una rubrica su <b>Vista Casa</b>, una trasmissione radiofonica sul design e la partecipazione a eventi come il Fuorisalone di Milano.</p>
-    <p class="ids">Papa Design Studio di Claudio Papa s.a.s · C.F. 03206160305 · P.IVA 03206160305</p>
-  </div>
+<section class="sec" id="premi"><div class="wrap">
+  <p class="eyebrow rv">Riconoscimenti</p>
+  <h2 class="h2 rv">Premi che <em>raccontano</em> il lavoro.</h2>
+  <ul class="awards">
+    {% for a in g.award %}<li class="rv"><time>{{ a.year }}</time><div><b>{{ a.title }}</b><span>{{ a.detail }}</span></div></li>{% endfor %}
+  </ul>
 </div></section>
 
-<!-- ============================ CONTATTI ============================ -->
+<section class="sec alt" id="percorso"><div class="wrap">
+  <p class="eyebrow rv">Percorso</p>
+  <h2 class="h2 rv">Dalle due ruote alle <em>vasche</em>.</h2>
+  <ol class="timeline">
+    {% for t in g.timeline %}<li class="rv"><time>{{ t.year }}</time><p>{{ t.text }}</p></li>{% endfor %}
+  </ol>
+</div></section>
+
 <section class="sec contacts" id="contatti"><div class="wrap">
   <p class="eyebrow rv">Contatti</p>
   <h2 class="h2 rv">Parliamo del <em>tuo progetto</em>.</h2>
@@ -171,23 +118,11 @@
   <h3 class="h3 rv">Online</h3>
   <div class="links rv">
     <a href="https://www.archiproducts.com/it/designer/claudio-papa" target="_blank" rel="noopener">Archiproducts ↗</a>
-    <a href="https://www.adi-design.org/profilo.php?q=id%3D4687&labelportfolio=info" target="_blank" rel="noopener">ADI · Associazione per il Disegno Industriale ↗</a>
+    <a href="https://www.disenia.it/thewellnesscollection/" target="_blank" rel="noopener">Disenia · The Wellness Collection ↗</a>
+    <a href="https://albatroswellness.it" target="_blank" rel="noopener">Albatros Wellness ↗</a>
+    <a href="https://www.adi-design.org/profilo.php?q=id%3D4687&labelportfolio=info" target="_blank" rel="noopener">ADI ↗</a>
     <a href="https://www.fuorisalone.it/en/designer/1589/Claudio-Papa-designer-ABA-Udine" target="_blank" rel="noopener">Fuorisalone ↗</a>
     <a href="https://www.linkedin.com/in/claudio-papa-50628418/" target="_blank" rel="noopener">LinkedIn ↗</a>
   </div>
 </div></section>
-
-<footer class="site-foot"><div class="wrap">
-  <img src="{{ url_for('static', filename='logo-gold.png') }}" alt="Papa Design Studio">
-  <address>
-    <b>Papa Design Studio</b> di Claudio Papa s.a.s<br>
-    Via Tarcento, 1 · S. Daniele del Friuli (UD)<br>
-    papadesignstudio@gmail.com · T. +39 335 62 65 844<br>
-    C.F. 03206160305 · P.IVA 03206160305
-  </address>
-  <a class="btn small ghost staff" href="/login">Area riservata</a>
-</div></footer>
-
-<script src="{{ url_for('static', filename='home.js') }}"></script>
-</body>
-</html>
+{% endblock %}

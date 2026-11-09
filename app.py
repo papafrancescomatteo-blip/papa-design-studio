@@ -316,22 +316,36 @@ def media_versions():
     return out
 
 
+_seed_lock = threading.Lock()
+
+
 def ensure_seed():
-    if not store.content_seeded():
-        if not store.list_content():
-            for d in content_seed.seed_docs():
+    with _seed_lock:
+        v = store.seed_version()
+        if v >= content_seed.SEED_VERSION:
+            return
+        existing = store.list_content()
+        for c in existing:                       # le vecchie "schede prodotto" sono sostituite dal catalogo
+            if c["type"] == "product":
+                store.delete_content(c["_id"])
+        if not any(c["type"] == "catalog" for c in existing):
+            for d in content_seed.seed_docs("catalog"):
                 store.add_content(d)
-        store.mark_content_seeded()
+        if v == 0:
+            for t in ("news", "award", "timeline"):
+                for d in content_seed.seed_docs(t):
+                    store.add_content(d)
+        store.set_seed_version(content_seed.SEED_VERSION)
 
 
 CONTENT_TYPES = {
-    "product": {"icon": 20, "brand": 120, "title": 120, "text": 600, "items": 2000, "url": 400, "urllabel": 60},
+    "catalog": {"title": 120, "brand": 120, "category": 60, "text": 400, "url": 400},
     "news": {"kind": 20, "source": 80, "title": 160, "when": 60, "text": 600, "url": 400},
     "award": {"year": 40, "title": 160, "detail": 240},
     "timeline": {"year": 40, "text": 500},
 }
-ICONS = {"vapore", "acqua", "ceramica", "doccia", "fuoco"}
-KINDS = {"Rivista", "Cersaie", "Evento", "Web"}
+CATEGORIES = ["Minipiscine", "Vasche", "Docce e rubinetteria", "Saune e bagno turco", "Sanitari", "Accessori e complementi"]
+KINDS = ["Rivista", "Stampa", "Cersaie", "Evento", "Web"]
 
 
 def clean_content(ctype, data):
@@ -346,23 +360,64 @@ def clean_content(ctype, data):
         out[k] = str(v or "").strip()[:mx]
     if "url" in out and out["url"] and not out["url"].lower().startswith(("http://", "https://")):
         raise ValueError("Il link deve iniziare con http:// o https://")
-    if ctype == "product":
-        out["icon"] = out["icon"] if out["icon"] in ICONS else "acqua"
+    if ctype == "catalog":
+        out["category"] = out["category"] if out["category"] in CATEGORIES else CATEGORIES[-1]
     if ctype == "news":
         out["kind"] = out["kind"] if out["kind"] in KINDS else "Rivista"
-    required = {"product": "title", "news": "title", "award": "title", "timeline": "text"}[ctype]
+    required = {"catalog": "title", "news": "title", "award": "title", "timeline": "text"}[ctype]
     if not out.get(required):
         raise ValueError("Compila il campo obbligatorio")
     return out
 
 
-@app.route("/")
-def home():
+def public_groups():
     ensure_seed()
     groups = {t: [] for t in CONTENT_TYPES}
     for c in store.list_content():
         groups.setdefault(c["type"], []).append(c)
-    return render_template("home.html", media=media_versions(), g=groups)
+    return groups
+
+
+def catalog_by_brand(items):
+    out = {}
+    for p in items:
+        out.setdefault(p.get("brand") or "Altri progetti", []).append(p)
+    return out
+
+
+@app.route("/")
+def home():
+    g = public_groups()
+    return render_template("home.html", media=media_versions(), g=g, brands=catalog_by_brand(g["catalog"]),
+                           brand_info=content_seed.BRAND_INFO)
+
+
+@app.route("/prodotti")
+def prodotti():
+    g = public_groups()
+    cats = [c for c in CATEGORIES if any(p.get("category") == c for p in g["catalog"])]
+    return render_template("prodotti.html", media=media_versions(), g=g, brands=catalog_by_brand(g["catalog"]),
+                           brand_info=content_seed.BRAND_INFO, cats=cats)
+
+
+@app.route("/news")
+def news():
+    g = public_groups()
+    kinds = [k for k in KINDS if any(n.get("kind") == k for n in g["news"])]
+    return render_template("news.html", media=media_versions(), g=g, kinds=kinds)
+
+
+@app.route("/robots.txt")
+def robots():
+    return ("User-agent: *\nAllow: /\nDisallow: /app\nDisallow: /admin\nDisallow: /login\nDisallow: /api/\n"
+            f"Sitemap: {request.url_root}sitemap.xml\n", 200, {"Content-Type": "text/plain; charset=utf-8"})
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    urls = "".join(f"<url><loc>{request.url_root.rstrip('/')}{p}</loc></url>" for p in ("/", "/prodotti", "/news"))
+    return (f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>',
+            200, {"Content-Type": "application/xml"})
 
 
 @app.get("/media/<slot>")
@@ -407,7 +462,7 @@ def api_content_list():
     ensure_seed()
     versions = media_versions()
     return jsonify({"items": [public_content(c, versions) for c in store.list_content()],
-                    "portrait": versions.get("ritratto")})
+                    "portrait": versions.get("ritratto"), "categories": CATEGORIES, "kinds": KINDS})
 
 
 @app.post("/api/content/<ctype>")

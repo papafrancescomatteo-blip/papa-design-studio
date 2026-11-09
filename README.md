@@ -31,3 +31,7 @@ Se il servizio dormiva, la chiusura viene comunque recuperata al primo accesso o
 Dall'area riservata, pulsante **Sito** (`/admin`): prodotti, riviste e Cersaie, premi, percorso e ritratto si aggiungono,
 modificano, riordinano e ricevono foto direttamente dal browser. I contenuti iniziali sono in `content_seed.py`
 e vengono caricati una sola volta al primo avvio.
+
+## Pagine pubbliche
+`/` home · `/prodotti` catalogo completo (filtri per categoria) · `/news` riviste, Cersaie, stampa ed eventi (filtri) ·
+`/robots.txt` e `/sitemap.xml` per i motori di ricerca. L'area staff (`/login`, `/app`, `/admin`) non viene indicizzata.

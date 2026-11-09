@@ -73,11 +73,12 @@ class MemoryStore(BaseStore):
             return sorted({e["date"][:7] for e in self.expenses.values()})
 
     # ---- contenuti del sito pubblico ----
-    def content_seeded(self):
-        return bool(self.settings.get("main", {}).get("content_seeded"))
+    def seed_version(self):
+        m = self.settings.get("main", {})
+        return int(m.get("seed_v") or (1 if m.get("content_seeded") else 0))
 
-    def mark_content_seeded(self):
-        self.set_settings(content_seeded=True)
+    def set_seed_version(self, v):
+        self.set_settings(seed_v=v)
 
     def list_content(self):
         with self.lock:
@@ -173,11 +174,12 @@ class MongoStore(BaseStore):
         return sorted({d[:7] for d in self.db.expenses.distinct("date")})
 
     # ---- contenuti del sito pubblico ----
-    def content_seeded(self):
-        return bool((self._get_settings() or {}).get("content_seeded"))
+    def seed_version(self):
+        m = self._get_settings() or {}
+        return int(m.get("seed_v") or (1 if m.get("content_seeded") else 0))
 
-    def mark_content_seeded(self):
-        self.set_settings(content_seeded=True)
+    def set_seed_version(self, v):
+        self.set_settings(seed_v=v)
 
     def list_content(self):
         return sorted(self.db.content.find(), key=lambda c: (c["type"], c.get("order", 0)))

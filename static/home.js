@@ -20,6 +20,15 @@
     items.forEach(i => io.observe(i));
   } else items.forEach(i => i.classList.add('in'));
 
+  // filtro catalogo per categoria
+  const cf = $('#catFilter');
+  if (cf) cf.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    cf.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    document.querySelectorAll('.prod').forEach(c => c.classList.toggle('hide', !!b.dataset.k && c.dataset.k !== b.dataset.k));
+    document.querySelectorAll('[data-brand]').forEach(s => s.classList.toggle('hide', !s.querySelector('.prod:not(.hide)')));
+  });
+
   // filtro riviste / Cersaie / eventi
   const fb = $('#newsFilter');
   if (fb) fb.addEventListener('click', e => {

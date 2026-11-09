@@ -3,23 +3,22 @@
   const $ = (s, r = document) => r.querySelector(s);
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+  const CATS = ['Minipiscine', 'Vasche', 'Docce e rubinetteria', 'Saune e bagno turco', 'Sanitari', 'Accessori e complementi'].map(c => [c, c]);
   const TYPES = {
-    product: {
-      title: 'Prodotti', add: 'Aggiungi prodotto', photo: true,
-      hint: 'Ogni scheda è una famiglia di prodotti o una collezione. Nell’elenco scrivi un prodotto per riga; per aggiungere una nota usa “ | ” (es. Hammam Plus | Home e Contract).',
+    catalog: {
+      title: 'Prodotti', add: 'Aggiungi prodotto', photo: true, search: true,
+      hint: 'Il catalogo completo mostrato nella pagina Prodotti. Raggruppati automaticamente per azienda e categoria.',
       fields: [
-        ['title', 'Titolo', 'text', 'w3', true], ['brand', 'Azienda / marchio', 'text', 'w3'],
-        ['icon', 'Icona', 'select', 'w3', false, [['acqua', 'Acqua'], ['vapore', 'Vapore'], ['ceramica', 'Ceramica'], ['doccia', 'Doccia'], ['fuoco', 'Fuoco']]],
-        ['urllabel', 'Testo del link (facoltativo)', 'text', 'w3'],
-        ['text', 'Descrizione', 'textarea', 'w6'], ['items', 'Elenco prodotti (uno per riga)', 'textarea', 'w6'],
-        ['url', 'Link (facoltativo, https://…)', 'text', 'w6']],
-      row: i => [i.title, [i.brand, (i.items || []).length ? (i.items.length + ' prodotti') : ''].filter(Boolean).join(' · ')]
+        ['title', 'Nome prodotto', 'text', 'w3', true], ['brand', 'Azienda / marchio (scrivi sempre uguale)', 'text', 'w3'],
+        ['category', 'Categoria', 'select', 'w6', false, CATS],
+        ['text', 'Breve descrizione', 'textarea', 'w6'], ['url', 'Link (facoltativo, https://…)', 'text', 'w6']],
+      row: i => [i.title, [i.brand, i.category].filter(Boolean).join(' · ')]
     },
     news: {
       title: 'Riviste e Cersaie', add: 'Aggiungi articolo / evento', photo: true,
       hint: 'Servizi su riviste, presentazioni a Cersaie, eventi e fiere. Indica il tipo per farlo comparire nel filtro della home.',
       fields: [
-        ['kind', 'Tipo', 'select', 'w3', false, [['Rivista', 'Rivista'], ['Cersaie', 'Cersaie'], ['Evento', 'Evento'], ['Web', 'Web']]],
+        ['kind', 'Tipo', 'select', 'w3', false, [['Rivista', 'Rivista'], ['Stampa', 'Stampa (quotidiani)'], ['Cersaie', 'Cersaie'], ['Evento', 'Evento'], ['Web', 'Web']]],
         ['source', 'Testata / luogo (es. Domus, Cersaie · Bologna)', 'text', 'w3'],
         ['title', 'Titolo', 'text', 'w3', true], ['when', 'Data (es. Settembre 2025)', 'text', 'w3'],
         ['text', 'Breve descrizione', 'textarea', 'w6'], ['url', 'Link all’articolo (facoltativo, https://…)', 'text', 'w6']],
@@ -39,7 +38,7 @@
     }
   };
 
-  let tab = 'product', data = { items: [], portrait: null };
+  let tab = 'catalog', data = { items: [], portrait: null };
 
   async function api(url, method = 'GET', body) {
     const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF },
@@ -83,6 +82,7 @@
     p.innerHTML = `<div class="ahead"><h2>${T.title}</h2><span class="muted">${list.length}</span><span class="sp"></span>
       <button class="btn primary" id="addItem">＋ ${T.add}</button></div>
       <p class="hint" style="margin:-4px 0 14px">${esc(T.hint)}</p>
+      ${list.length > 8 ? '<input id="q" class="search" placeholder="Cerca…" aria-label="Cerca">' : ''}
       <div class="alist">${list.map((i, n) => {
         const [a, b] = T.row(i);
         return `<div class="arow" data-id="${i.id}">
@@ -147,6 +147,11 @@
     if (e.target.closest('[data-del]')) { if (confirm('Eliminare definitivamente questa voce?')) { await api('/api/content/' + id, 'DELETE'); toast('Eliminato'); load(); } }
     const mv = e.target.closest('[data-mv]');
     if (mv) { await api(`/api/content/${id}/move`, 'POST', { dir: +mv.dataset.mv }); load(); }
+  });
+  $('#panel').addEventListener('input', e => {
+    if (e.target.id !== 'q') return;
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('.arow').forEach(r => r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none');
   });
   $('#panel').addEventListener('change', async e => {
     if (e.target.id !== 'portraitFile' || !e.target.files[0]) return;

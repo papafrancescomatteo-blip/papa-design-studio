@@ -1,0 +1,42 @@
+{% extends "public_base.html" %}
+{% block title %}Prodotti · Claudio Papa · Papa Design Studio{% endblock %}
+{% block desc %}Tutti i prodotti disegnati da Claudio Papa: minipiscine, vasche, saune e bagno turco, docce e rubinetteria, sanitari e complementi per Disenia, Albatros, Ama, Glass1989, Azzurra ed Ege.{% endblock %}
+{% macro icon(cat) -%}
+{%- if cat == 'Saune e bagno turco' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14 36c0-5 5-5 5-10s-5-5-5-10M24 36c0-5 5-5 5-10s-5-5-5-10M34 36c0-5 5-5 5-10s-5-5-5-10"/></svg>
+{%- elif cat == 'Sanitari' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h32l-3 14a6 6 0 0 1-6 5H17a6 6 0 0 1-6-5z"/><path d="M14 20v-6a6 6 0 0 1 6-6h2"/></svg>
+{%- elif cat == 'Docce e rubinetteria' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8a8 8 0 0 0-8 8v4"/><path d="M14 20h16"/><path d="M22 28c0 4-3 6-3 9a3 3 0 0 0 6 0c0-3-3-5-3-9z"/></svg>
+{%- elif cat == 'Accessori e complementi' -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l14 18-14 18L10 24z"/></svg>
+{%- else -%}<svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 30c4-4 8-4 12 0s8 4 12 0 8-4 12 0M6 38c4-4 8-4 12 0s8 4 12 0 8-4 12 0"/><path d="M8 22V12a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v10"/></svg>
+{%- endif -%}
+{%- endmacro %}
+{% block body %}
+<section class="pagehead"><div class="wrap">
+  <p class="eyebrow reveal">Catalogo</p>
+  <h1 class="h2 reveal" style="--d:.08s">Tutti i prodotti <em>disegnati da Claudio Papa</em>.</h1>
+  <p class="sub reveal" style="--d:.16s">{{ g.catalog|length }} progetti per {{ brands|length }} marchi: minipiscine, vasche, saune, docce, sanitari e complementi.</p>
+  <div class="chips" id="catFilter">
+    <button class="on" data-k="">Tutti</button>
+    {% for c in cats %}<button data-k="{{ c }}">{{ c }}</button>{% endfor %}
+  </div>
+</div></section>
+
+<section class="sec tight"><div class="wrap">
+  {% for brand, items in brands.items() %}
+  <div class="brandblock" id="b{{ loop.index }}" data-brand>
+    <div class="brandhead rv"><h2>{{ brand }}</h2><p>{{ brand_info.get(brand, '') }}</p></div>
+    <div class="cgrid2">
+      {% for p in items %}{% set mk = 'c-' ~ p._id %}
+      <article class="prod rv{% if mk in media %} has-img{% endif %}" data-k="{{ p.category }}">
+        {% if mk in media %}<div class="pimg"><img src="/media/{{ mk }}?v={{ media[mk] }}" alt="{{ p.title }}" loading="lazy"></div>{% else %}{{ icon(p.category) }}{% endif %}
+        <small>{{ p.category }}</small>
+        <h3>{{ p.title }}</h3>
+        {% if p.text %}<p>{{ p.text }}</p>{% endif %}
+        {% if p.url %}<a class="plink" href="{{ p.url }}" target="_blank" rel="noopener">Scopri di più ↗</a>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  <p class="more">Cerchi un prodotto in particolare o vuoi sviluppare un nuovo progetto? <a class="plink" href="/#contatti">Contattaci →</a></p>
+</div></section>
+{% endblock %}

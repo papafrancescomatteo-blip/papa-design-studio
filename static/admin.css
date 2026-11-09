@@ -25,3 +25,4 @@
 .f label.btn{text-transform:none;letter-spacing:0;font-size:13px;color:var(--text)}
 .form .foot{justify-content:flex-end}
 .form .foot .err{margin-right:auto}
+.search{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:10px 14px;margin-bottom:12px;color:inherit;outline:none}.search:focus{border-color:var(--gold)}
